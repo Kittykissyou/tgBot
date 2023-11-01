@@ -24,10 +24,10 @@ bot.on('message', (msg) => {
   if (splits[0].trim().toLowerCase() === 'клиент') {
     //console.log(splits);
     const svk = msg.from.first_name + ' ' + msg.from.last_name;
-    let crossKK;
-    let selfie;
-    let bs;
-    let cp;
+    let crossKK = 0;
+    let selfie = 0;
+    let bs = 0;
+    let cp = 0;
 
     for (let i = 0; i < splits.length; i++) {
       if (splits[i].split(' ')[0].toLowerCase() === 'селфи') {
