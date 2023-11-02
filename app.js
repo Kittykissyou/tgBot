@@ -16,11 +16,15 @@ class Config {
 }
 
 bot.on('message', (msg) => {
-  //////////Задай логику айди чата////////////////////////
-  ////////////////////////////////////////////////////////
-
-  const message = msg.text; // кат. пробел рус
-  const splits = message.split('\n'); //разделяем все строки на елементы массива
+  let message;
+  let splits;
+  if (msg.photo) {
+    message = msg.caption;
+    splits = message.split('\n');
+  } else {
+    message = msg.text;
+    splits = message.split('\n');
+  }
   if (splits[0].trim().toLowerCase() === 'клиент') {
     //console.log(splits);
     const svk = msg.from.first_name + ' ' + msg.from.last_name;
@@ -44,6 +48,7 @@ bot.on('message', (msg) => {
       }
     }
     const googleData = new Config({ svk, selfie, bs, crossKK, cp });
+
     axios
       .request(googleData)
       .then((response) => {
@@ -56,10 +61,3 @@ bot.on('message', (msg) => {
     console.log('это сообщение не содержит отчет по клиенту');
   }
 });
-
-/* Возвращает название продукта со второй строки
-
-  const splitss = message.split('\n');
-  console.log(splitss[1].trim());
-  console.log(splitss);
-  */
