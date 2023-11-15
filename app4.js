@@ -68,38 +68,38 @@ bot.on('message', async (msg) => {
         return bot.sendMessage(user, `Сколько было фондирований`);
       }
 
-      if (!report.funding) {
+      if (report.funding === undefined) {
         report.funding = Number(msg.text);
         return bot.sendMessage(
           user,
           `Сколько всего было предложений по Кросс КК или Комбо`
         );
       }
-      if (!report.offerKK) {
+      if (report.offerKK === undefined) {
         report.offerKK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько из них было фактически выдано');
       }
-      if (!report.crossKK) {
+      if (report.crossKK === undefined) {
         report.crossKK = Number(msg.text);
         return bot.sendMessage(user, `Сколько из них было отказов`);
       }
-      if (!report.refusalOfferKK) {
+      if (report.refusalOfferKK === undefined) {
         report.refusalOfferKK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было кросс ДК');
       }
-      if (!report.crossDk) {
+      if (report.crossDk === undefined) {
         report.crossDk = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было всего выдано Селфи ДК');
       }
-      if (!report.selfieDK) {
+      if (report.selfieDK === undefined) {
         report.selfieDK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было всего выдано Селфи КК');
       }
-      if (!report.selfieKK) {
+      if (report.selfieKK === undefined) {
         report.selfieKK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было всего выдано ЦП');
       }
-      if (!report.cp) {
+      if (report.cp === undefined) {
         report.cp = Number(msg.text);
         report.date = moment().add(6, 'hours').format('DD.MM.YYYY HH:mm:ss');
         bot.sendMessage(user, 'Спасибо за отчет!');
