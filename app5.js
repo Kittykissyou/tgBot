@@ -8,14 +8,14 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbxvk-PmVgWd5MPY5neAguQMB2zwLUpf9ejNn7AgZ5x-iHgoY8suMh4o8oJlJVZeP9u9PA/exec';
+      'https://script.google.com/macros/s/AKfycbzzuwR0AfTAqWwO2Y7o-oI-7-nByrp2RDI9RGRkHuaImBmByQbLdJBUML_KTv74TPMwgg/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
     this.data = data;
   }
 }
-
+let person = false;
 let report = {
   svk: undefined,
   bs: undefined,
@@ -25,13 +25,9 @@ let report = {
   refusalOfferKK: undefined,
   selfieDK: undefined,
   selfieKK: undefined,
-  cp: undefined,
-  ао: undefined,
-  am: undefined,
+  iphone: undefined,
   ios: undefined,
-  android: undefined,
   date: undefined,
-  //selfie: undefined,
 };
 
 bot.on('message', async (msg) => {
@@ -48,20 +44,50 @@ bot.on('message', async (msg) => {
       `${msg.from.first_name + ' ' + msg.from.username} is avalible now`
     );
   } else {
+    /*
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://script.google.com/macros/s/AKfycbxzasy7td4YGLjMU3o-q5UrmFG3JtOdiJw5lBKcxCzYoulgBB4Acr_OGmtOwIisIoDTKg/exec?data=${
+        msg.from.first_name + ' ' + msg.from.username
+      }`,
+      headers: {},
+    };
+    axios
+      .request(config)
+      .then((response) => {
+        if (!response.data) {
+        } else {
+          bot.sendMessage(user, `Сегодня вы уже давали отчет`);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    /*
+  setInterval(() => {
+    //.add(6, 'hours')
+    if (moment().format('HH:mm') === '17:52') {
+      person = false;
+      console.log('Можно давать отчет');
+    } else {
+      console.log('пока рано');
+    }
+  }, 60000);
+  */
     if (
       chat === -1001821085070 || // вечерняя
       chat === -4071454549 || // тест3
       chat === -1002013109097 // тест 2
     ) {
       if (
-        user === 383782832 || //Жуков
         user === 346256185 || //гончаров
         user === 1379125664 || //репина
         user === 847331105 || //я
         user === 736294274 // кирилл
       ) {
-        await bot.sendMessage(user, `Привет, ${msg.from.first_name}!`);
-        await bot.sendMessage(user, 'Напиши сюда сколько сегодня было БС');
+        bot.sendMessage(user, `Привет, ${msg.from.first_name}!`);
+        bot.sendMessage(user, 'Напиши сюда сколько сегодня было БС');
       }
     }
 
@@ -104,28 +130,18 @@ bot.on('message', async (msg) => {
         report.selfieKK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько всего было клиентов с айфоном');
       }
+      if (report.iphone === undefined) {
+        report.iphone = Number(msg.text);
+        return bot.sendMessage(
+          user,
+          'Сколько было установлено приложений на айфон'
+        );
+      }
       if (report.ios === undefined) {
         report.ios = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько всего было клиентов с андройдом');
-      }
-      if (report.android === undefined) {
-        report.android = Number(msg.text);
-        return bot.sendMessage(
-          user,
-          'Скольким клиентам ты установил альфа-мобаил'
-        );
-      }
-      if (report.am === undefined) {
-        report.am = Number(msg.text);
-        return bot.sendMessage(
-          user,
-          'Скольким клиентам ты установил альфа-онлайн'
-        );
-      }
-      if (report.ao === undefined) {
-        report.ao = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
       }
+
       if (report.cp === undefined) {
         report.cp = Number(msg.text);
         report.date = moment().add(6, 'hours').format('DD.MM.YYYY HH:mm:ss');
@@ -142,15 +158,13 @@ bot.on('message', async (msg) => {
               offerKK: undefined,
               crossKK: undefined,
               refusalOfferKK: undefined,
-              crossDk: undefined,
-              selfie: undefined,
-              cp: undefined,
-              ао: undefined,
-              am: undefined,
+              selfieDK: undefined,
+              selfieKK: undefined,
+              iphone: undefined,
               ios: undefined,
-              android: undefined,
               date: undefined,
             };
+            person = true;
           })
           .catch((error) => {
             console.log(error);
