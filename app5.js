@@ -15,7 +15,7 @@ class Config {
     this.data = data;
   }
 }
-let person = false;
+
 let report = {
   svk: undefined,
   bs: undefined,
@@ -81,11 +81,14 @@ bot.on('message', async (msg) => {
       chat === -1002013109097 // тест 2
     ) {
       if (
+        user === 998602268 || // Кирилл дж.
+        user === 5230054339 || // Мария Дружинина
+        user === 883783073 || //Галя
         user === 346256185 || //гончаров
         user === 1379125664 || //репина
         user === 847331105 || //я
         user === 762856078 || // Кондратьева
-        user === 5477500698 || // Герман
+        user === 5477500698 || // Герман А.
         user === 1643994830 // факторович
       ) {
         bot.sendMessage(user, `Привет, ${msg.from.first_name}!`);
@@ -113,12 +116,15 @@ bot.on('message', async (msg) => {
       }
       if (report.crossKK === undefined) {
         report.crossKK = Number(msg.text);
-        return bot.sendMessage(user, `Сколько из них было отказов`);
+        report.refusalOfferKK = report.offerKK - report.crossKK;
+        return bot.sendMessage(user, `Сколько было кросс ДК`);
       }
+      /*
       if (report.refusalOfferKK === undefined) {
         report.refusalOfferKK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было кросс ДК');
       }
+      */
       if (report.crossDk === undefined) {
         report.crossDk = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было всего выдано Селфи ДК');
