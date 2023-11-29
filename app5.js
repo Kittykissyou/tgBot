@@ -89,7 +89,10 @@ bot.on('message', async (msg) => {
         user === 847331105 || //я
         user === 762856078 || // Кондратьева
         user === 5477500698 || // Герман А.
-        user === 1643994830 // факторович
+        user === 1643994830 || // факторович
+        user === 1934358785 || // Нагулина
+        user === 1438443038 || // Чистая
+        user === 1254362058 // Кречетов
       ) {
         bot.sendMessage(user, `Привет, ${msg.from.first_name}!`);
         bot.sendMessage(user, 'Напиши сюда сколько сегодня было БС');
@@ -97,86 +100,91 @@ bot.on('message', async (msg) => {
     }
 
     if (chat === user) {
-      if (!report.svk && !report.bs) {
-        report.svk = msg.from.first_name + ' ' + msg.from.username;
-        report.bs = Number(msg.text);
-        return bot.sendMessage(user, `Сколько было фондирований`);
-      }
+      if (msg.text / 0 === Infinity) {
+        if (!report.svk && !report.bs) {
+          report.svk = msg.from.first_name + ' ' + msg.from.username;
 
-      if (report.funding === undefined) {
-        report.funding = Number(msg.text);
-        return bot.sendMessage(
-          user,
-          `Сколько всего было предложений по Кросс КК или Комбо`
-        );
-      }
-      if (report.offerKK === undefined) {
-        report.offerKK = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько из них было фактически выдано');
-      }
-      if (report.crossKK === undefined) {
-        report.crossKK = Number(msg.text);
-        report.refusalOfferKK = report.offerKK - report.crossKK;
-        return bot.sendMessage(user, `Сколько было кросс ДК`);
-      }
-      /*
+          report.bs = Number(msg.text);
+          return bot.sendMessage(user, `Сколько было фондирований`);
+        }
+
+        if (report.funding === undefined) {
+          report.funding = Number(msg.text);
+          return bot.sendMessage(
+            user,
+            `Сколько всего было предложений по Кросс КК или Комбо`
+          );
+        }
+        if (report.offerKK === undefined) {
+          report.offerKK = Number(msg.text);
+          return bot.sendMessage(user, 'Сколько из них было фактически выдано');
+        }
+        if (report.crossKK === undefined) {
+          report.crossKK = Number(msg.text);
+          report.refusalOfferKK = report.offerKK - report.crossKK;
+          return bot.sendMessage(user, `Сколько было кросс ДК`);
+        }
+        /*
       if (report.refusalOfferKK === undefined) {
         report.refusalOfferKK = Number(msg.text);
         return bot.sendMessage(user, 'Сколько было кросс ДК');
       }
       */
-      if (report.crossDk === undefined) {
-        report.crossDk = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько было всего выдано Селфи ДК');
-      }
-      if (report.selfieDK === undefined) {
-        report.selfieDK = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько было всего выдано Селфи КК');
-      }
+        if (report.crossDk === undefined) {
+          report.crossDk = Number(msg.text);
+          return bot.sendMessage(user, 'Сколько было всего выдано Селфи ДК');
+        }
+        if (report.selfieDK === undefined) {
+          report.selfieDK = Number(msg.text);
+          return bot.sendMessage(user, 'Сколько было всего выдано Селфи КК');
+        }
 
-      if (report.selfieKK === undefined) {
-        report.selfieKK = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько всего было клиентов с айфоном');
-      }
-      if (report.iphone === undefined) {
-        report.iphone = Number(msg.text);
-        return bot.sendMessage(
-          user,
-          'Сколько было установлено приложений на айфон'
-        );
-      }
-      if (report.ios === undefined) {
-        report.ios = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
-      }
+        if (report.selfieKK === undefined) {
+          report.selfieKK = Number(msg.text);
+          return bot.sendMessage(user, 'Сколько всего было клиентов с айфоном');
+        }
+        if (report.iphone === undefined) {
+          report.iphone = Number(msg.text);
+          return bot.sendMessage(
+            user,
+            'Сколько было установлено приложений на айфон'
+          );
+        }
+        if (report.ios === undefined) {
+          report.ios = Number(msg.text);
+          return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
+        }
 
-      if (report.cp === undefined) {
-        report.cp = Number(msg.text);
-        report.date = moment().add(6, 'hours').format('DD.MM.YYYY HH:mm:ss');
-        bot.sendMessage(user, 'Спасибо за отчет!');
-        const googleData = new Config(report);
-        axios
-          .request(googleData)
-          .then((response) => {
-            console.log(JSON.stringify(response.data));
-            report = {
-              svk: undefined,
-              bs: undefined,
-              funding: undefined,
-              offerKK: undefined,
-              crossKK: undefined,
-              refusalOfferKK: undefined,
-              selfieDK: undefined,
-              selfieKK: undefined,
-              iphone: undefined,
-              ios: undefined,
-              date: undefined,
-            };
-            person = true;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        if (report.cp === undefined) {
+          report.cp = Number(msg.text);
+          report.date = moment().add(6, 'hours').format('DD.MM.YYYY HH:mm:ss');
+          bot.sendMessage(user, 'Спасибо за отчет!');
+          const googleData = new Config(report);
+          axios
+            .request(googleData)
+            .then((response) => {
+              console.log(JSON.stringify(response.data));
+              report = {
+                svk: undefined,
+                bs: undefined,
+                funding: undefined,
+                offerKK: undefined,
+                crossKK: undefined,
+                refusalOfferKK: undefined,
+                selfieDK: undefined,
+                selfieKK: undefined,
+                iphone: undefined,
+                ios: undefined,
+                date: undefined,
+              };
+              person = true;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      } else {
+        bot.sendMessage(user, 'Ответ должен содержать числовое значение');
       }
     }
   }
