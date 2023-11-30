@@ -8,7 +8,7 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbzzuwR0AfTAqWwO2Y7o-oI-7-nByrp2RDI9RGRkHuaImBmByQbLdJBUML_KTv74TPMwgg/exec';
+      'https://script.google.com/macros/s/AKfycbwsIODbc_SX9dNlUW3KJLH36XBrgfmiDD3A9WXCeRM43ix5bOlTJX6837Jv7-GKbgEMNg/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -100,7 +100,7 @@ bot.on('message', async (msg) => {
     }
 
     if (chat === user) {
-      if (msg.text / 0 === Infinity) {
+      if (msg.text / 0 === Infinity || msg.text == 0) {
         if (!report.svk && !report.bs) {
           report.svk = msg.from.first_name + ' ' + msg.from.username;
 
