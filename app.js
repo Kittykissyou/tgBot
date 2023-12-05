@@ -1,6 +1,7 @@
 const axios = require('axios');
+/*
 const TelegramApi = require('node-telegram-bot-api');
-const token = '6380678892:AAEKDYsjxbkNGlezSAVQw3qLV1fah0dKr2k';
+const token = '6855752765:AAFl8XTDxyUaO0NMvDhQDS-eFO1nY2zmxH8';
 const bot = new TelegramApi(token, { polling: true });
 class Config {
   constructor(data) {
@@ -14,7 +15,10 @@ class Config {
     this.data = data;
   }
 }
-
+bot.on('message', (msg) => {
+  bot.getUpdates(100, 99);
+});
+/*
 bot.on('message', (msg) => {
   let message;
   let splits;
@@ -61,3 +65,4 @@ bot.on('message', (msg) => {
     console.log('это сообщение не содержит отчет по клиенту');
   }
 });
+*/
