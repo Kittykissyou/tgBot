@@ -8,7 +8,7 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbwsIODbc_SX9dNlUW3KJLH36XBrgfmiDD3A9WXCeRM43ix5bOlTJX6837Jv7-GKbgEMNg/exec';
+      'https://script.google.com/macros/s/AKfycbzT4QMYCs_k1FdeeMyAgQviQrgW1NFDfi9V0wg8GjLkUJcfSv3KhbVCjFQ4JIYetjPEXQ/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -16,19 +16,7 @@ class Config {
   }
 }
 
-let report = {
-  svk: undefined,
-  bs: undefined,
-  funding: undefined,
-  offerKK: undefined,
-  crossKK: undefined,
-  refusalOfferKK: undefined,
-  selfieDK: undefined,
-  selfieKK: undefined,
-  iphone: undefined,
-  ios: undefined,
-  date: undefined,
-};
+let report = {};
 
 bot.on('message', async (msg) => {
   const chat = msg.chat.id;
@@ -95,7 +83,8 @@ bot.on('message', async (msg) => {
         user === 1254362058 || // Кречетов
         user === 5128220724 || // Конюкова
         user === 483942491 || // Быкова
-        user === 6368983749 // Бондаренко
+        user === 6368983749 || // Бондаренко
+        user === 5805007839 // Иванова Нина
       ) {
         bot.sendMessage(user, `Привет, ${msg.from.first_name}!`);
         bot.sendMessage(user, 'Напиши сюда сколько сегодня было БС');
@@ -127,14 +116,9 @@ bot.on('message', async (msg) => {
           report.refusalOfferKK = report.offerKK - report.crossKK;
           return bot.sendMessage(user, `Сколько было кросс ДК`);
         }
-        /*
-      if (report.refusalOfferKK === undefined) {
-        report.refusalOfferKK = Number(msg.text);
-        return bot.sendMessage(user, 'Сколько было кросс ДК');
-      }
-      */
-        if (report.crossDk === undefined) {
-          report.crossDk = Number(msg.text);
+
+        if (report.crossDK === undefined) {
+          report.crossDK = Number(msg.text);
           return bot.sendMessage(user, 'Сколько было всего выдано Селфи ДК');
         }
         if (report.selfieDK === undefined) {
@@ -161,26 +145,23 @@ bot.on('message', async (msg) => {
         if (report.cp === undefined) {
           report.cp = Number(msg.text);
           report.date = moment().add(6, 'hours').format('DD.MM.YYYY HH:mm:ss');
-          bot.sendMessage(user, 'Спасибо за отчет!');
+          let bonus =
+            report.funding * 600 +
+            report.crossKK * 470 +
+            report.crossDK * 300 +
+            report.selfieDK * 300 +
+            report.selfieKK * 470 +
+            report.cp * 100;
+          bot.sendMessage(
+            user,
+            `Спасибо за отчет!\nПо моим подсчетам, твоя премия за кросс-продукты составляет ${bonus} руб.`
+          );
           const googleData = new Config(report);
           axios
             .request(googleData)
             .then((response) => {
               console.log(JSON.stringify(response.data));
-              report = {
-                svk: undefined,
-                bs: undefined,
-                funding: undefined,
-                offerKK: undefined,
-                crossKK: undefined,
-                refusalOfferKK: undefined,
-                selfieDK: undefined,
-                selfieKK: undefined,
-                iphone: undefined,
-                ios: undefined,
-                date: undefined,
-              };
-              person = true;
+              report = {};
             })
             .catch((error) => {
               console.log(error);
