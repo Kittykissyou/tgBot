@@ -101,20 +101,34 @@ bot.on('message', async (msg) => {
         }
 
         if (report.funding === undefined) {
-          report.funding = Number(msg.text);
-          return bot.sendMessage(
-            user,
-            `Сколько всего было предложений по Кросс КК или Комбо`
-          );
+          if (Number(msg.text) <= report.bs) {
+            report.funding = Number(msg.text);
+            return bot.sendMessage(
+              user,
+              `Сколько всего было предложений по Кросс КК или Комбо`
+            );
+          } else {
+            return bot.sendMessage(
+              user,
+              `Количество фондирований не может быть больше количества открытых БС (${report.bs} шт.)`
+            );
+          }
         }
         if (report.offerKK === undefined) {
           report.offerKK = Number(msg.text);
           return bot.sendMessage(user, 'Сколько из них было фактически выдано');
         }
         if (report.crossKK === undefined) {
-          report.crossKK = Number(msg.text);
-          report.refusalOfferKK = report.offerKK - report.crossKK;
-          return bot.sendMessage(user, `Сколько было кросс ДК`);
+          if (Number(msg.text) <= report.offerKK) {
+            report.crossKK = Number(msg.text);
+            report.refusalOfferKK = report.offerKK - report.crossKK;
+            return bot.sendMessage(user, `Сколько было кросс ДК`);
+          } else {
+            return bot.sendMessage(
+              user,
+              `Количество кросс КК не может быть больше количества предложений по кросс КК (${report.offerKK} шт.)`
+            );
+          }
         }
 
         if (report.crossDK === undefined) {
@@ -138,8 +152,15 @@ bot.on('message', async (msg) => {
           );
         }
         if (report.ios === undefined) {
-          report.ios = Number(msg.text);
-          return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
+          if (Number(msg.text) <= report.iphone) {
+            report.ios = Number(msg.text);
+            return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
+          } else {
+            return bot.sendMessage(
+              user,
+              `Количество установок приложения на айфон не может быть больше общего количества айфонов (${report.iphone} шт.)`
+            );
+          }
         }
 
         if (report.cp === undefined) {
