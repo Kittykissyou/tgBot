@@ -1,68 +1,251 @@
 const axios = require('axios');
-/*
+const moment = require('moment');
 const TelegramApi = require('node-telegram-bot-api');
-const token = '6855752765:AAFl8XTDxyUaO0NMvDhQDS-eFO1nY2zmxH8';
+const token = '6892709365:AAGa9BG4LR2CL9DU5ufS-SUbcfZp9YdtL9Y';
 const bot = new TelegramApi(token, { polling: true });
+const reports = [];
 class Config {
   constructor(data) {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbxVdvzu2jIuNtyPnK53qLo7dpXFHoD2MaKC_uL5pmQ2yzoomfLuqFYZw8aIcPgLimS7Iw/exec';
+      'https://script.google.com/macros/s/AKfycbxSz7L_4DXB_oKFhLhLBVr_NyxUISfEkusygYzkau9Z39c-F1bEZCfVVHSbDwDs3T0D/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
     this.data = data;
   }
 }
-bot.on('message', (msg) => {
-  bot.getUpdates(100, 99);
-});
-/*
-bot.on('message', (msg) => {
-  let message;
-  let splits;
-  if (msg.photo) {
-    message = msg.caption;
-    splits = message.split('\n');
-  } else {
-    message = msg.text;
-    splits = message.split('\n');
-  }
-  if (splits[0].trim().toLowerCase() === 'клиент') {
-    //console.log(splits);
-    const svk = msg.from.first_name + ' ' + msg.from.last_name;
-    let crossKK = 0;
-    let selfie = 0;
-    let bs = 0;
-    let cp = 0;
 
-    for (let i = 0; i < splits.length; i++) {
-      if (splits[i].split(' ')[0].toLowerCase() === 'селфи') {
-        selfie = splits[i].split(' ')[1] === '+' ? 1 : 0;
-      }
-      if (splits[i].split(' ')[0].toLowerCase() === 'бс') {
-        bs = splits[i].split(' ')[1] === '+' ? 1 : 0;
-      }
-      if (splits[i].split(' ')[0].toLowerCase() === 'кросс') {
-        crossKK = splits[i].split(' ')[1] === '+' ? 1 : 0;
-      }
-      if (splits[i].split(' ')[0].toLowerCase() === 'цп') {
-        cp = splits[i].split(' ')[1] === '+' ? 1 : 0;
+/*
+const numberKeyboard = {
+  reply_markup: JSON.stringify({
+    inline_keyboard: [
+      [
+        { text: '1', callback_data: 1 },
+        { text: '2', callback_data: 2 },
+        { text: '3', callback_data: 3 },
+      ],
+      [
+        { text: '4', callback_data: 4 },
+        { text: '5', callback_data: 5 },
+        { text: '6', callback_data: 6 },
+      ],
+      [
+        { text: '7', callback_data: 7 },
+        { text: '8', callback_data: 8 },
+        { text: '9', callback_data: 9 },
+      ],
+      [{ text: '0', callback_data: 0 }],
+    ],
+  }),
+};
+*/
+const booleanKeyboard = {
+  reply_markup: JSON.stringify({
+    inline_keyboard: [
+      [{ text: 'Все верно', callback_data: 'true' }],
+      [{ text: 'Изменить', callback_data: 'false' }],
+    ],
+  }),
+};
+
+const reportFunction = (chat, user, message, userName, tgName) => {
+  if (message === '/start') {
+    bot.sendMessage(
+      user,
+      `Привет, ${userName}!\nЯ помогу тебе с вечерним отчетом`
+    );
+  }
+
+  if (message === '/report') {
+    bot.sendMessage(user, `Привет, ${userName}!`);
+    bot.sendMessage(user, 'Cколько сегодня было ДК по плану');
+  } else {
+    if (chat === user) {
+      if (message / 0 === Infinity || message == 0) {
+        if (reports.length == 0) {
+          reports.push({
+            svk: userName + ' ' + tgName,
+            dkPlan: Number(message),
+          });
+          return bot.sendMessage(
+            user,
+            `Сколько ДК было фактически предоставленно`
+          );
+        } else {
+          for (let i = 0; i < reports.length; i++) {
+            if (reports[i].svk === userName + ' ' + tgName) {
+              if (reports[i].dkPlan == undefined) {
+                reports[i].dkPlan = Number(message);
+                return bot.sendMessage(
+                  user,
+                  `Сколько ДК было фактически предоставленно`
+                );
+              }
+              if (reports[i].bs == undefined) {
+                reports[i].bs = Number(message);
+                return bot.sendMessage(
+                  user,
+                  `Сколько было фондирований, т.е пополнений брокерского счета без покупки акций на бирже`
+                );
+              }
+              if (reports[i].funding == undefined) {
+                if (Number(message) <= reports[i].bs) {
+                  reports[i].funding = Number(message);
+                  return bot.sendMessage(
+                    user,
+                    `Сколько было покупок акций с клиентом на бирже`
+                  );
+                } else {
+                  return bot.sendMessage(
+                    user,
+                    `Количество фондирований не может быть больше количества открытых БС (${reports[i].bs} шт.)`
+                  );
+                }
+              }
+              if (reports[i].stock == undefined) {
+                if (Number(message) <= reports[i].bs) {
+                  reports[i].stock = Number(message);
+                  return bot.sendMessage(
+                    user,
+                    `Сколько всего было предложений по Кросс КК или Комбо`
+                  );
+                } else {
+                  return bot.sendMessage(
+                    user,
+                    `Количество покупок акций не может быть больше количества открытых БС (${reports[i].bs} шт.)`
+                  );
+                }
+              }
+
+              if (reports[i].offerKK == undefined) {
+                reports[i].offerKK = Number(message);
+                return bot.sendMessage(
+                  user,
+                  'Сколько из них было фактически выдано'
+                );
+              }
+              if (reports[i].crossKK === undefined) {
+                if (Number(message) <= reports[i].offerKK) {
+                  reports[i].crossKK = Number(message);
+                  reports[i].refusalOfferKK =
+                    reports[i].offerKK - reports[i].crossKK;
+                  return bot.sendMessage(user, `Сколько было кросс ДК`);
+                } else {
+                  return bot.sendMessage(
+                    user,
+                    `Количество кросс КК не может быть больше количества предложений по кросс КК (${reports[i].offerKK} шт.)`
+                  );
+                }
+              }
+              if (reports[i].crossDK === undefined) {
+                reports[i].crossDK = Number(message);
+                return bot.sendMessage(
+                  user,
+                  'Сколько было всего выдано Селфи ДК'
+                );
+              }
+              if (reports[i].selfieDK === undefined) {
+                reports[i].selfieDK = Number(message);
+                return bot.sendMessage(
+                  user,
+                  'Сколько было всего выдано Селфи КК'
+                );
+              }
+              if (reports[i].selfieKK === undefined) {
+                reports[i].selfieKK = Number(message);
+                return bot.sendMessage(
+                  user,
+                  'Сколько всего было клиентов с айфоном'
+                );
+              }
+              if (reports[i].iphone === undefined) {
+                reports[i].iphone = Number(message);
+                return bot.sendMessage(
+                  user,
+                  'Сколько было установлено приложений на айфон'
+                );
+              }
+              if (reports[i].ios === undefined) {
+                if (Number(message) <= reports[i].iphone) {
+                  reports[i].ios = Number(message);
+                  return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
+                } else {
+                  return bot.sendMessage(
+                    user,
+                    `Количество установок приложения на айфон не может быть больше общего количества айфонов (${reports[i].iphone} шт.)`
+                  );
+                }
+              }
+
+              if (reports[i].cp === undefined) {
+                reports[i].cp = Number(message);
+                reports[i].date = moment()
+                  .add(6, 'hours')
+                  .format('DD.MM.YYYY HH:mm:ss');
+
+                bot.sendMessage(
+                  user,
+                  `Подтвердите данные перед отправкой\nБС ${reports[i].bs}\nФондирований ${reports[i].funding}\nПокупок акций ${reports[i].stock}\nПредложений по кросс КК ${reports[i].offerKK}\nКросс КК ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
+                  booleanKeyboard
+                );
+              }
+            } else {
+              if (!reports.find((el) => el.svk == userName + ' ' + tgName)) {
+                reports.push({
+                  svk: userName + ' ' + tgName,
+                });
+              }
+            }
+          }
+        }
+      } else {
+        bot.sendMessage(user, 'Ответ должен содержать числовое значение');
       }
     }
-    const googleData = new Config({ svk, selfie, bs, crossKK, cp });
+  }
+};
+bot.on('message', async (msg) => {
+  const chat = msg.chat.id;
+  const user = msg.from.id;
+  const message = msg.text;
+  const userName = msg.from.first_name;
+  const tgName = msg.from.username;
+  reportFunction(chat, user, message, userName, tgName);
+});
+bot.on('callback_query', (msg) => {
+  const user = msg.from.id;
+  const userName = msg.from.first_name;
+  const tgName = msg.from.username;
+  let data = msg.data === 'true' ? true : false;
+  let report = reports.find((el) => el.svk == userName + ' ' + tgName);
+  let deleteIndex = reports.indexOf(report);
+  if (data) {
+    const googleData = new Config(report);
+    let bonus =
+      report.funding * 600 +
+      report.crossKK * 470 +
+      report.crossDK * 300 +
+      report.selfieDK * 300 +
+      report.selfieKK * 470 +
+      report.cp * 100;
 
     axios
       .request(googleData)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        reports.splice(deleteIndex, 1);
+        return bot.sendMessage(
+          user,
+          `Спасибо за отчет!\nПо моим подсчетам, твоя премия за кросс-продукты составляет ${bonus} руб.`
+        );
       })
       .catch((error) => {
         console.log(error);
       });
   } else {
-    console.log('это сообщение не содержит отчет по клиенту');
+    reports.splice(deleteIndex, 1);
+    bot.sendMessage(user, 'Сколько было БС');
   }
 });
-*/
