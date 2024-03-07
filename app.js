@@ -94,6 +94,15 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
     if (reports[i].svk === userName + ' ' + tgName) {
       //Нужна переделка полная в соотвестии с логикой несколькиъ продуктов
       if (data === '1') {
+        if (reports[i].kk2Fact) {
+          reports[i].kk2MissedCall = message;
+          bot.sendMessage(
+            user,
+            `Клиент не отвечает: ${reports[i].kk2MissedCall}`,
+            chooseStepKeyboard
+          );
+          isSecondNameReport = false;
+        }
         if (reports[i].kkFact) {
           reports[i].kkMissedCall = message;
           bot.sendMessage(
@@ -102,7 +111,8 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
           isSecondNameReport = false;
-        } else {
+        }
+        if (reports[i].dkFact) {
           reports[i].dkMissedCall = message;
           bot.sendMessage(
             user,
@@ -246,42 +256,74 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
         }
       }
       if (data === 'technicalErrorAct') {
-        if (reports[i].kkAct) {
+        if (reports[i].crossKkFact) {
+          reports[i].crossKkTechErrorAct = message;
+          bot.sendMessage(
+            user,
+            `Техническая ошибка выдачи: ${reports[i].crossKkTechErrorAct}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].crossDkFact && reports[i].crossKkFact === undefined) {
+          reports[i].crossDkTechErrorAct = message;
+          bot.sendMessage(
+            user,
+            `Техническая ошибка выдачи: ${reports[i].crossDkTechErrorAct}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].kkAct && reports[i].kk2Act === undefined) {
           reports[i].kkTechErrorAct = message;
           bot.sendMessage(
             user,
             `Техническая ошибка активации: ${reports[i].kkTechErrorAct}`,
             chooseStepKeyboard
           );
-          isSecondNameReport = false;
-        } else {
+        }
+        if (reports[i].dkAct && reports[i].kkAct === undefined) {
           reports[i].dkTechErrorAct = message;
           bot.sendMessage(
             user,
             `Техническая ошибка активации: ${reports[i].dkTechErrorAct}`,
             chooseStepKeyboard
           );
-          isSecondNameReport = false;
         }
+        isSecondNameReport = false;
       }
       if (data === 'clientRejectAct') {
-        if (reports[i].kkAct) {
+        if (reports[i].crossKkFact) {
+          reports[i].crossKkClientReject = message;
+          bot.sendMessage(
+            user,
+            `Техническая ошибка выдачи: ${reports[i].crossKkClientReject}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].crossDkFact && reports[i].crossKkFact === undefined) {
+          reports[i].crossDkClientReject = message;
+          bot.sendMessage(
+            user,
+            `отказ клиента: ${reports[i].crossDkClientReject}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].kkAct && reports[i].kk2Act === undefined) {
           reports[i].kkClientRejectAct = message;
           bot.sendMessage(
             user,
-            `Техническая ошибка активации: ${reports[i].kkTechErrorAct}`,
+            `Отказ клиента от активации: ${reports[i].kkClientRejectAct}`,
             chooseStepKeyboard
           );
-          isSecondNameReport = false;
-        } else {
+        }
+        if (reports[i].dkAct && reports[i].kkAct === undefined) {
           reports[i].dkClientRejectAct = message;
           bot.sendMessage(
             user,
             `Отказ клиента от активации: ${reports[i].dkClientRejectAct}`,
             chooseStepKeyboard
           );
-          isSecondNameReport = false;
         }
+        isSecondNameReport = false;
       }
     }
   }
@@ -523,7 +565,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                         `Итого не предоставленно ${
                           reports[i].crossDkPlan - reports[i].crossDkFact
                         } шт. кросс ДК.\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
-                        cardReasonKeyboard
+                        activReasonKeyboard
                       );
                     }
                   } else {
@@ -753,26 +795,50 @@ bot.on('callback_query', (msg) => {
     //ТУТ ВНИМАТЕЛЬНО
     //НУЖНО ОПРЕДЕЛИТЬ ВЕРНЫЕ УСЛОВИЯ ДЛЯ ПОЯВЛЕНИЯ СООТВЕТСТВУЮЩИХ СООБЩЕНИЙ
     // возможность вывода списка уже внесенных фамилий, через цикл по ключам где undefined
-    if (report.kkFact === undefined) {
-      if (report.dkTechErrorAct || report.dkClientRejectAct) {
+
+    if (report.crossKkFact) {
+      if (report.crossKkTechError || report.crossKkClientReject) {
         bot.sendMessage(
           user,
-          `Итого не активированно ${
-            report.dkFact - report.dkAct
-          } шт. дебетовых карт\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          `Итого не предоставлено ${
+            report.crossKkPlan - report.crossKkFact
+          } шт. кросс КК/Комбо\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
           activReasonKeyboard
         );
         isSecondNameReport = true;
+      }
+    }
+    if (report.crossDkFact && report.crossKkFact === undefined) {
+      if (report.crossDkTechError || report.crossDkClientReject) {
+        bot.sendMessage(
+          user,
+          `Итого не предоставлено ${
+            report.crossDkPlan - report.crossDkFact
+          } шт. кросс ДК\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          activReasonKeyboard
+        );
+        isSecondNameReport = true;
+      }
+    }
+    if (report.kk2Fact && report.crossDkFact === undefined) {
+      if (report.kk2TechErrorAct || report.kk2ClientRejectAct) {
+        bot.sendMessage(
+          user,
+          `Итого не активированно ${
+            report.kk2Fact - report.kk2Act
+          } шт. КК2\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          activReasonKeyboard
+        );
       } else {
         bot.sendMessage(
           user,
           `Итого не предоставлено ${
-            report.dkPlan - report.dkFact
-          } шт. дебетовых карт\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+            report.kk2Plan - report.kk2Fact
+          } шт. КК2\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
           cardReasonKeyboard
         );
-        isSecondNameReport = true;
       }
+      isSecondNameReport = true;
     }
     if (report.kkFact && report.kk2Fact === undefined) {
       if (report.kkTechErrorAct || report.kkClientRejectAct) {
@@ -783,7 +849,6 @@ bot.on('callback_query', (msg) => {
           } шт. кредитных карт\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
           activReasonKeyboard
         );
-        isSecondNameReport = true;
       } else {
         bot.sendMessage(
           user,
@@ -792,8 +857,28 @@ bot.on('callback_query', (msg) => {
           } шт. кредитных карт\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
           cardReasonKeyboard
         );
-        isSecondNameReport = true;
       }
+      isSecondNameReport = true;
+    }
+    if (report.dkFact && report.kkFact === undefined) {
+      if (report.dkTechErrorAct || report.dkClientRejectAct) {
+        bot.sendMessage(
+          user,
+          `Итого не активированно ${
+            report.dkFact - report.dkAct
+          } шт. дебетовых карт\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          activReasonKeyboard
+        );
+      } else {
+        bot.sendMessage(
+          user,
+          `Итого не предоставлено ${
+            report.dkPlan - report.dkFact
+          } шт. дебетовых карт\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          cardReasonKeyboard
+        );
+      }
+      isSecondNameReport = true;
     }
   }
   if (data === 'continueReport') {
@@ -914,15 +999,23 @@ bot.on('callback_query', (msg) => {
     isSecondNameReport = true;
   }
   if (data === 'technicalErrorAct') {
-    report.dkFact - report.dkAct === 1
-      ? bot.sendMessage(
-          user,
-          'Напиши фамилию клиента, который не активировал карту из-за тех. ошибка'
-        )
-      : bot.sendMessage(
-          user,
-          'Напиши через пробел фамилии клиентов, которые не активировали карту из-за тех. ошибки'
-        );
+    if (report.crossKkFact) {
+      bot.sendMessage(
+        user,
+        'Напиши фамилию/фамилии клиента/клиентов, которым не предоставленна кросс КК/Комбо из-за технической ошибки'
+      );
+    }
+    if (report.crossDkFact) {
+      bot.sendMessage(
+        user,
+        'Напиши фамилию/фамилии клиента/клиентов, которым не предоставленна кросс ДК из-за технической ошибки'
+      );
+    } else {
+      bot.sendMessage(
+        user,
+        'Напиши фамилию клиента, который не активировал карту из-за тех. ошибка'
+      );
+    }
     isSecondNameReport = true;
   }
   if (data === 'clientRejectAct') {
