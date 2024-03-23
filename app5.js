@@ -4,6 +4,8 @@ const TelegramApi = require('node-telegram-bot-api');
 const token = '6643944827:AAEud3mnVvQmj-IoG3tPqOLIkNq82By1WoM';
 const bot = new TelegramApi(token, { polling: true });
 const reports = [];
+let reportsName = [];
+let reportsBotName = [];
 class Config {
   constructor(data) {
     this.method = 'post';
@@ -96,6 +98,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 5128220724 || // Конюкова
         user === 6368983749 // Бондаренко
       ) {
+        reportsName.push(userName + ' ' + tgName);
         bot.sendMessage(user, `Привет, ${userName}!`);
         bot.sendMessage(user, 'Cколько сегодня было БС');
       }
@@ -263,6 +266,7 @@ bot.on('callback_query', (msg) => {
     axios
       .request(googleData)
       .then((response) => {
+        reportsBotName.push(userName + ' ' + tgName);
         console.log(JSON.stringify(response.data));
         reports.splice(deleteIndex, 1);
         return bot.sendMessage(
@@ -278,3 +282,22 @@ bot.on('callback_query', (msg) => {
     bot.sendMessage(user, 'Сколько было БС');
   }
 });
+setInterval(() => {
+  if (moment().add(6, 'hours').format('HH') === '08') {
+    if (reportsName.length !== reportsBotName.length) {
+      for (let i = 0; i < reportsName; i++) {
+        for (let j = 0; j < reportsBotName; j++) {
+          if (reportsName[i] === reportsBotName[j]) {
+            reportsName = reportsName.filter((el) => el !== reportsName[i]);
+            break;
+          }
+        }
+      }
+      bot.sendMessage(847331105, `Отчет не поступил от ${reportsName}`);
+    } else {
+      bot.sendMessage(847331105, `Отчет поступил от всех сотрудников`);
+    }
+  }
+  reportsName = [];
+  reportsBotName = [];
+}, 3600000);

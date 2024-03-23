@@ -712,7 +712,23 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
-        if (reports[i].kk2Act && reports[i].crossDkFact === undefined) {
+        if (reports[i].kk2Transaction && reports[i].crossDkFact === undefined) {
+          reports[i].kk2TransactionTechError = message;
+          bot.sendMessage(
+            user,
+            `Техническая ошибка совершения транзакции: ${reports[i].kk2TransactionTechError}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].kk2Ppi && reports[i].kk2Transaction === undefined) {
+          reports[i].kk2PpiTechError = message;
+          bot.sendMessage(
+            user,
+            `Техническая ошибка подключения страховки: ${reports[i].kk2PpiTechError}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].kk2Act && reports[i].kk2Ppi === undefined) {
           reports[i].kk2TechErrorAct = message;
           bot.sendMessage(
             user,
@@ -720,6 +736,7 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
+
         if (reports[i].kkTransaction && reports[i].kk2Act === undefined) {
           reports[i].kkTransactionTechError = message;
           bot.sendMessage(
@@ -736,7 +753,10 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
-        if (reports[i].kkAct && reports[i].kkPpi === undefined) {
+        if (
+          (reports[i].kkAct && reports[i].kkPpi === undefined) ||
+          (reports[i].kkAct === 0 && reports[i].kkPpi === undefined)
+        ) {
           reports[i].kkTechErrorAct = message;
           bot.sendMessage(
             user,
@@ -744,7 +764,10 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
-        if (reports[i].dkAct && reports[i].kkAct === undefined) {
+        if (
+          (reports[i].dkAct && reports[i].kkAct === undefined) ||
+          (reports[i].dkAct === 0 && reports[i].kkAct === undefined)
+        ) {
           reports[i].dkTechErrorAct = message;
           bot.sendMessage(
             user,
@@ -771,7 +794,23 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
-        if (reports[i].kk2Act && reports[i].crossDkFact === undefined) {
+        if (reports[i].kk2Transaction && reports[i].crossDkFact === undefined) {
+          reports[i].kk2TransactionClientReject = message;
+          bot.sendMessage(
+            user,
+            `Отказ клиента от совершения транзакции: ${reports[i].kk2TransactionClientReject}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].kk2Ppi && reports[i].kk2Transaction === undefined) {
+          reports[i].kk2PpiClientReject = message;
+          bot.sendMessage(
+            user,
+            `Отказ клиента от подключения страховки: ${reports[i].kk2PpiClientReject}`,
+            chooseStepKeyboard
+          );
+        }
+        if (reports[i].kk2Act && reports[i].kk2Ppi === undefined) {
           reports[i].kk2ClientRejectAct = message;
           bot.sendMessage(
             user,
@@ -795,7 +834,10 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
-        if (reports[i].kkAct && reports[i].kkPpi === undefined) {
+        if (
+          (reports[i].kkAct && reports[i].kkPpi === undefined) ||
+          (reports[i].kkAct === 0 && reports[i].kkPpi === undefined)
+        ) {
           reports[i].kkClientRejectAct = message;
           bot.sendMessage(
             user,
@@ -803,7 +845,10 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
-        if (reports[i].dkAct && reports[i].kkAct === undefined) {
+        if (
+          (reports[i].dkAct && reports[i].kkAct === undefined) ||
+          (reports[i].dkAct === 0 && reports[i].kkAct === undefined)
+        ) {
           reports[i].dkClientRejectAct = message;
           bot.sendMessage(
             user,
@@ -811,6 +856,16 @@ const secondNameReport = (chat, user, message, userName, tgName) => {
             chooseStepKeyboard
           );
         }
+        isSecondNameReport = false;
+      }
+      if (data == 'crossKkNameReport') {
+        reports[i].crossKkNameReport = message;
+        bot.sendMessage(user, `Сколько было RKO по плану`);
+        isSecondNameReport = false;
+      }
+      if (data == 'bsNameReport') {
+        reports[i].bsNameReport = message;
+        bot.sendMessage(user, `Сколько было выдано селфи ДК`);
         isSecondNameReport = false;
       }
     }
@@ -987,7 +1042,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                 if (reports[i].kkAct == undefined) {
                   if (Number(message) <= reports[i].kkFact) {
                     reports[i].kkAct = Number(message);
-                    if (reports[i].kkAct == 0) {
+                    if (reports[i].kkAct === 0) {
                       reports[i].kkTransaction = 0;
                     }
                     if (reports[i].kkAct === reports[i].kkFact) {
@@ -1015,17 +1070,10 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                   if (Number(message) <= reports[i].kkFact) {
                     reports[i].kkPpi = Number(message);
                     if (reports[i].kkPpi === reports[i].kkFact) {
-                      if ((reports[i].kkTransaction = 0)) {
-                        return bot.sendMessage(
-                          user,
-                          'Сколько было КК2 по плану'
-                        );
-                      } else {
-                        return bot.sendMessage(
-                          user,
-                          'Сколько было совершенно транзакций к выданнм КК'
-                        );
-                      }
+                      return bot.sendMessage(
+                        user,
+                        'Сколько было совершенно транзакций к выданным КК'
+                      );
                     } else {
                       return bot.sendMessage(
                         user,
@@ -1043,8 +1091,8 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                   }
                 }
                 if (reports[i].kkTransaction == undefined) {
-                  if (Number(message) <= reports[i].kkFact) {
-                    reports[i].kkPpi = Number(message);
+                  if (Number(message) <= reports[i].kkAct) {
+                    reports[i].kkTransaction = Number(message);
                     if (reports[i].kkTransaction === reports[i].kkAct) {
                       return bot.sendMessage(user, 'Сколько было КК2 по плану');
                     } else {
@@ -1052,7 +1100,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                         user,
                         `Итого выполнено ${
                           reports[i].kkAct - reports[i].kkTransaction
-                        } шт. страховок к КК.\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+                        } шт. транзакций по КК.\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
                         activReasonKeyboard
                       );
                     }
@@ -1068,10 +1116,21 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                   if (reports[i].kk2Plan == 0) {
                     reports[i].kk2Fact = 0;
                     reports[i].kk2Act = 0;
-                    return bot.sendMessage(
-                      user,
-                      'Сколько было выдано кросс ДК'
-                    );
+                    reports[i].kk2Ppi = 0;
+                    reports[i].kk2Transaction = 0;
+                    if (reports[i].kkFact + reports[i].kk2Plan > 0) {
+                      return bot.sendMessage(
+                        user,
+                        'Сколько было выдано кросс ДК'
+                      );
+                    } else {
+                      reports[i].crossDkPlan = 0;
+                      reports[i].crossDkFact = 0;
+                      return bot.sendMessage(
+                        user,
+                        'Сколько было предложений по кросс КК/Комбо'
+                      );
+                    }
                   } else {
                     return bot.sendMessage(
                       user,
@@ -1085,10 +1144,21 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                     reports[i].kk2Fact = Number(message);
                     if (reports[i].kk2Fact == 0) {
                       reports[i].kk2Act = 0;
-                      return bot.sendMessage(
-                        user,
-                        'Сколько было выдано кросс ДК'
-                      );
+                      reports[i].kk2Ppi = 0;
+                      reports[i].kk2Transaction = 0;
+                      if (reports[i].kkFact + reports[i].kk2Fact > 0) {
+                        return bot.sendMessage(
+                          user,
+                          'Сколько было выдано кросс ДК'
+                        );
+                      } else {
+                        reports[i].crossDkPlan = 0;
+                        reports[i].crossDkFact = 0;
+                        return bot.sendMessage(
+                          user,
+                          'Сколько было предложений по кросс КК/Комбо'
+                        );
+                      }
                     } else {
                       if (reports[i].kk2Plan === reports[i].kk2Fact) {
                         return bot.sendMessage(
@@ -1119,7 +1189,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                     if (reports[i].kk2Act === reports[i].kk2Fact) {
                       return bot.sendMessage(
                         user,
-                        'Сколько было выдано кросс ДК'
+                        'Сколько было подключено страховок к КК2'
                       );
                     } else {
                       return bot.sendMessage(
@@ -1134,6 +1204,54 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                     return bot.sendMessage(
                       user,
                       `Количество активированных КК2 не может быть больше фактического значения выданых КК2 (${reports[i].kk2Fact} шт.)\nВведите верное значение ещё раз`
+                    );
+                  }
+                }
+                if (reports[i].kk2Ppi == undefined) {
+                  if (Number(message) <= reports[i].kk2Fact) {
+                    reports[i].kk2Ppi = Number(message);
+                    if (reports[i].kk2Ppi === reports[i].kk2Fact) {
+                      return bot.sendMessage(
+                        user,
+                        'Сколько было совершенно транзакций к выданным КК2'
+                      );
+                    } else {
+                      return bot.sendMessage(
+                        user,
+                        `Итого не подключено ${
+                          reports[i].kk2Fact - reports[i].kk2Ppi
+                        } шт. страховок к КК2.\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+                        activReasonKeyboard
+                      );
+                    }
+                  } else {
+                    return bot.sendMessage(
+                      user,
+                      `Количество подключенных страховок к КК2 не может быть больше фактического значения выданых КК2 (${reports[i].kk2Fact} шт.)\nВведите верное значение ещё раз`
+                    );
+                  }
+                }
+                if (reports[i].kk2Transaction == undefined) {
+                  if (Number(message) <= reports[i].kk2Act) {
+                    reports[i].kk2Transaction = Number(message);
+                    if (reports[i].kk2Transaction === reports[i].kk2Act) {
+                      return bot.sendMessage(
+                        user,
+                        'Сколько было выдано кросс ДК'
+                      );
+                    } else {
+                      return bot.sendMessage(
+                        user,
+                        `Итого выполнено ${
+                          reports[i].kk2Act - reports[i].kk2Transaction
+                        } шт. транзакций по КК2.\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+                        activReasonKeyboard
+                      );
+                    }
+                  } else {
+                    return bot.sendMessage(
+                      user,
+                      `Количество транзакций по КК2 не может быть больше значения активированных КК (${reports[i].kk2Act} шт.)\nВведите верное значение ещё раз`
                     );
                   }
                 }
@@ -1164,13 +1282,9 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                         );
                       }
                     }
-                  } else {
-                    return bot.sendMessage(
-                      user,
-                      `Количество предоставленных кросс ДК не может быть больше суммы фактических значения КК и КК2 (${reports[i].crossDkPlan} шт.)\nВведите верное значение ещё раз`
-                    );
                   }
                 }
+
                 if (reports[i].crossDkAct == undefined) {
                   if (Number(message) <= reports[i].crossDkFact) {
                     reports[i].crossDkAct = Number(message);
@@ -1207,13 +1321,19 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                     );
                   }
                 }
+
                 if (reports[i].crossKkFact === undefined) {
                   if (Number(message) <= reports[i].offerKk) {
                     reports[i].crossKkFact = Number(message);
                     reports[i].refusalOfferKK =
                       reports[i].offerKk - reports[i].crossKkFact;
                     if (reports[i].offerKk === reports[i].crossKkFact) {
-                      return bot.sendMessage(user, `Сколько было RKO по плану`);
+                      isSecondNameReport = true;
+                      data = 'crossKkNameReport';
+                      return bot.sendMessage(
+                        user,
+                        `Напиши через пробел фамилии клиентов, которым предоставлено кросс КК/Комбо и лимит на карте. В формате: Иванов 100 000 Петров 28 000`
+                      );
                     } else {
                       return bot.sendMessage(
                         user,
@@ -1449,44 +1569,64 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                     );
                   }
                 }
+                if (reports[i].clPlan == undefined) {
+                  reports[i].clPlan = Number(message);
+                  if (reports[i].clPlan == 0) {
+                    reports[i].clFact = 0;
+                    return bot.sendMessage(
+                      user,
+                      'Сколько было открыто БС с покупкой акций'
+                    );
+                  } else {
+                    return bot.sendMessage(
+                      user,
+                      'Сколько Cl было фактически предоставленно'
+                    );
+                  }
+                }
+
+                if (reports[i].clFact == undefined) {
+                  if (Number(message) <= reports[i].clPlan) {
+                    reports[i].clFact = Number(message);
+                    if (reports[i].clFact === reports[i].clPlan) {
+                      return bot.sendMessage(
+                        user,
+                        'Сколько было открыто БС с покупкой акций'
+                      );
+                    } else {
+                      return bot.sendMessage(
+                        user,
+                        `Итого не предоставленно ${
+                          reports[i].clPlan - reports[i].clFact
+                        } шт. Cl.\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+                        cardReasonKeyboard
+                      );
+                    }
+                  } else {
+                    return bot.sendMessage(
+                      user,
+                      `Количество предоставленных Сl не может быть больше планового значения Re (${reports[i].clPlan} шт.)\nВведите верное значение ещё раз`
+                    );
+                  }
+                }
+
                 if (reports[i].bs == undefined) {
                   reports[i].bs = Number(message);
                   if (reports[i].bs == 0) {
-                    reports[i].stock = 0;
                     return bot.sendMessage(
                       user,
                       `Сколько всего было предложений по Кросс КК или Комбо`
                     );
                   } else {
+                    isSecondNameReport = true;
+                    data = 'bsNameReport';
                     return bot.sendMessage(
                       user,
-                      `Сколько было покупок акций с клиентом на бирже`
+                      `Напиши через пробел фамилии клиентов, которым был открыт БС и у которых куплены акции`
                     );
                   }
                 }
 
-                if (reports[i].stock == undefined) {
-                  if (Number(message) <= reports[i].bs) {
-                    reports[i].stock = Number(message);
-                    return bot.sendMessage(
-                      user,
-                      `Сколько всего было предложений по Кросс КК или Комбо к основной выдаче ДК`
-                    );
-                  } else {
-                    return bot.sendMessage(
-                      user,
-                      `Количество покупок акций не может быть больше количества открытых БС (${reports[i].bs} шт.)`
-                    );
-                  }
-                }
-
-                if (reports[i].crossDK === undefined) {
-                  reports[i].crossDK = Number(message);
-                  return bot.sendMessage(
-                    user,
-                    'Сколько было всего выдано Селфи ДК'
-                  );
-                }
                 if (reports[i].selfieDK === undefined) {
                   reports[i].selfieDK = Number(message);
                   return bot.sendMessage(
@@ -1559,6 +1699,7 @@ bot.on('message', async (msg) => {
   const message = msg.text;
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
+
   console.log(reports);
   console.log(data);
   !isSecondNameReport
@@ -1569,6 +1710,14 @@ bot.on('callback_query', (msg) => {
   console.log(reports);
   console.log(data);
   const user = msg.from.id;
+  const crossKkNameReportFn = () => {
+    isSecondNameReport = true;
+    data = 'crossKkNameReport';
+    bot.sendMessage(
+      user,
+      'Напиши через пробел фамилии клиентов, которым предоставлено кросс КК/Комбо и лимит на карте. В формате: Иванов 100 000 Петров 28 000'
+    );
+  };
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
   data = msg.data;
@@ -1610,6 +1759,16 @@ bot.on('callback_query', (msg) => {
   }
   if (data === 'false') {
     if (report.cp === undefined) {
+      report.rePlan = 0;
+      report.reFact = 0;
+      report.reAct = 0;
+      report.pilPlan = 0;
+      report.pilFact = 0;
+      report.pilPpi = 0;
+      report.clPlan = 0;
+      report.clFact = 0;
+      report.mortgagePlan = 0;
+      report.mortgageFact = 0;
       bot.sendMessage(user, 'Сколько было сделок по покупке акций');
     } else {
       reports.splice(deleteIndex, 1);
@@ -1649,7 +1808,32 @@ bot.on('callback_query', (msg) => {
         isSecondNameReport = true;
       }
     }
-    if (report.kk2Fact && report.crossDkFact === undefined) {
+
+    if (report.kk2Transaction && report.crossDkFact === undefined) {
+      if (report.kk2TransactionTechError || report.kk2TransactionClientReject) {
+        bot.sendMessage(
+          user,
+          `Итого совершенно  ${
+            report.kk2Act - report.kk2Transaction
+          } шт. транзакций к КК\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          activReasonKeyboard
+        );
+      }
+      isSecondNameReport = true;
+    }
+    if (report.kk2Ppi && report.kk2Transaction === undefined) {
+      if (report.kk2PpiTechError || report.kk2PpiClientReject) {
+        bot.sendMessage(
+          user,
+          `Итого подключено  ${
+            report.kk2Fact - report.kk2Ppi
+          } шт. страховок к КК2\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          activReasonKeyboard
+        );
+      }
+      isSecondNameReport = true;
+    }
+    if (report.kk2Fact && report.kk2Ppi === undefined) {
       if (report.kk2TechErrorAct || report.kk2ClientRejectAct) {
         bot.sendMessage(
           user,
@@ -1669,7 +1853,19 @@ bot.on('callback_query', (msg) => {
       }
       isSecondNameReport = true;
     }
-    /*
+
+    if (report.kkTransaction && report.kk2Fact === undefined) {
+      if (report.kkTransactionTechError || report.kkTransactionClientReject) {
+        bot.sendMessage(
+          user,
+          `Итого совершенно  ${
+            report.kkAct - report.kkTransaction
+          } шт. транзакций к КК\nВыбери одну из предложенных категорий причин для внесений фамилий клиента`,
+          activReasonKeyboard
+        );
+      }
+      isSecondNameReport = true;
+    }
     if (report.kkPpi && report.kkTransaction === undefined) {
       if (report.kkPpiTechError || report.kkPpiClientReject) {
         bot.sendMessage(
@@ -1680,8 +1876,9 @@ bot.on('callback_query', (msg) => {
           activReasonKeyboard
         );
       }
-      */
-    if (report.kkFact && report.kk2Fact === undefined) {
+      isSecondNameReport = true;
+    }
+    if (report.kkFact && report.kkPpi === undefined) {
       if (report.kkTechErrorAct || report.kkClientRejectAct) {
         bot.sendMessage(
           user,
@@ -1747,6 +1944,8 @@ bot.on('callback_query', (msg) => {
       ? bot.sendMessage(user, 'Сколько кросс ДК активированно')
       : report.offerKk === undefined
       ? bot.sendMessage(user, 'Сколько было предложений по кросс КК/Комбо')
+      : report.crossKkNameReport === undefined
+      ? crossKkNameReportFn()
       : report.rkoPlan === undefined
       ? bot.sendMessage(user, 'Сколько было RKO по плану')
       : report.zpcPlan === undefined
@@ -1831,6 +2030,7 @@ bot.on('callback_query', (msg) => {
         user,
         'Напиши фамилию/фамилии клиента/клиентов, которым не предоставленна кросс КК/Комбо из-за технической ошибки'
       );
+      isSecondNameReport = true;
     }
     if (report.crossDkAct && report.crossKkFact === undefined) {
       bot.sendMessage(
@@ -1869,16 +2069,18 @@ bot.on('callback_query', (msg) => {
       );
     }
     if (
-      (report.dkAct && report.kkFact - report.kkPpi === undefined) ||
-      (report.kkAct && report.kk2Fact - report.kk2Ppi === undefined) ||
-      (report.kk2Act && report.pilPpi === undefined)
+      (report.dkAct === 0 && report.kkFact == undefined) ||
+      (report.dkAct && report.kkFact == undefined) ||
+      (report.kkAct && report.kk2Fact == undefined) ||
+      (report.kk2Act && report.crossDkPlan == undefined) ||
+      (report.crossDkAct && report.crossKkFact == undefined) ||
+      (report.crossKkAct && report.pilPpi == undefined)
     ) {
       bot.sendMessage(
         user,
         'Напиши фамилию/фамилии клиента/клиентов, которые не активировали карту из-за тех. ошибки'
       );
     }
-
     isSecondNameReport = true;
   }
   if (data === 'clientRejectAct') {
@@ -1915,10 +2117,7 @@ bot.on('callback_query', (msg) => {
     isSecondNameReport = true;
   }
 });
-//Страховки КК КК2
-//добавить ppi и транзакции к тех ошибкам и клаент реджектам
-// новые переменные для ppi и транзакции
-//транзакции кк кк2
+
 // CL
 // Ипотека
 // Т0
