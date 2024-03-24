@@ -285,6 +285,7 @@ bot.on('callback_query', (msg) => {
   }
 });
 setInterval(() => {
+  /*
   if (moment().add(6, 'hours').format('HH') === '19') {
     if (reportsName.length !== reportsBotName.length) {
       for (let i = 0; i < reportsName.length; i++) {
@@ -302,8 +303,8 @@ setInterval(() => {
       }
     }
   }
-
-  if (moment().add(6, 'hours').format('HH') === '21') {
+*/
+  if (moment().add(6, 'hours').format('HH') === '08') {
     if (reportsName.length !== reportsBotName.length) {
       for (let i = 0; i < reportsName.length; i++) {
         for (let j = 0; j < reportsBotName.length; j++) {
