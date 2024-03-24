@@ -98,7 +98,8 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 5128220724 || // Конюкова
         user === 6368983749 // Бондаренко
       ) {
-        reportsName.push(userName + ' ' + tgName);
+        reportsName.push({ svk: userName + ' ' + tgName, id: user });
+        console.log(reportsName);
         bot.sendMessage(user, `Привет, ${userName}!`);
         bot.sendMessage(user, 'Cколько сегодня было БС');
       }
@@ -266,7 +267,8 @@ bot.on('callback_query', (msg) => {
     axios
       .request(googleData)
       .then((response) => {
-        reportsBotName.push(userName + ' ' + tgName);
+        reportsBotName.push({ svk: userName + ' ' + tgName, id: user });
+        console.log(reportsBotName);
         console.log(JSON.stringify(response.data));
         reports.splice(deleteIndex, 1);
         return bot.sendMessage(
@@ -283,12 +285,32 @@ bot.on('callback_query', (msg) => {
   }
 });
 setInterval(() => {
-  if (moment().add(6, 'hours').format('HH') === '08') {
+  if (moment().add(6, 'hours').format('HH') === '19') {
     if (reportsName.length !== reportsBotName.length) {
-      for (let i = 0; i < reportsName; i++) {
-        for (let j = 0; j < reportsBotName; j++) {
-          if (reportsName[i] === reportsBotName[j]) {
-            reportsName = reportsName.filter((el) => el !== reportsName[i]);
+      for (let i = 0; i < reportsName.length; i++) {
+        for (let j = 0; j < reportsBotName.length; j++) {
+          if (reportsName[i].svk === reportsBotName[j].svk) {
+            reportsName = reportsName.filter(
+              (el) => el.svk !== reportsName[i].svk
+            );
+            break;
+          }
+        }
+      }
+      for (let k = 0; k < reportsName.length; k++) {
+        bot.sendMessage(reportsName[k].id, `Дай отчет боту!\nСколько было БС`);
+      }
+    }
+  }
+
+  if (moment().add(6, 'hours').format('HH') === '21') {
+    if (reportsName.length !== reportsBotName.length) {
+      for (let i = 0; i < reportsName.length; i++) {
+        for (let j = 0; j < reportsBotName.length; j++) {
+          if (reportsName[i].svk === reportsBotName[j].svk) {
+            reportsName = reportsName.filter(
+              (el) => el.svk !== reportsName[i].svk
+            );
             break;
           }
         }
