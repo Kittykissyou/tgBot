@@ -99,7 +99,6 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 6368983749 // Бондаренко
       ) {
         reportsName.push({ svk: userName + ' ' + tgName, id: user });
-        console.log(reportsName);
         bot.sendMessage(user, `Привет, ${userName}!`);
         bot.sendMessage(user, 'Cколько сегодня было БС');
       }
@@ -268,7 +267,6 @@ bot.on('callback_query', (msg) => {
       .request(googleData)
       .then((response) => {
         reportsBotName.push({ svk: userName + ' ' + tgName, id: user });
-        console.log(reportsBotName);
         console.log(JSON.stringify(response.data));
         reports.splice(deleteIndex, 1);
         return bot.sendMessage(
