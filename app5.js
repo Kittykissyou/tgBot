@@ -297,7 +297,7 @@ setInterval(() => {
     } else {
       bot.sendMessage(847331105, `Отчет поступил от всех сотрудников`);
     }
+    reportsName = [];
+    reportsBotName = [];
   }
-  reportsName = [];
-  reportsBotName = [];
 }, 3600000);
