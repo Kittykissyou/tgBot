@@ -314,7 +314,10 @@ setInterval(() => {
           }
         }
       }
-      bot.sendMessage(847331105, `Отчет не поступил от ${reportsName}`);
+      bot.sendMessage(
+        847331105,
+        `Отчет не поступил от ${reportsName.map((el) => el.svk)}`
+      );
     } else {
       bot.sendMessage(847331105, `Отчет поступил от всех сотрудников`);
     }
