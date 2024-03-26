@@ -117,10 +117,19 @@ const reportFunction = (chat, user, message, userName, tgName) => {
             if (reports[i].svk === userName + ' ' + tgName) {
               if (reports[i].bs == undefined) {
                 reports[i].bs = Number(message);
-                return bot.sendMessage(
-                  user,
-                  `Сколько было фондирований, т.е пополнений брокерского счета без покупки акций на бирже`
-                );
+                if (reports[i].bs == 0) {
+                  reports[i].funding = 0;
+                  reports[i].stock = 0;
+                  return bot.sendMessage(
+                    user,
+                    `Сколько всего было предложений по Кросс КК или Комбо`
+                  );
+                } else {
+                  return bot.sendMessage(
+                    user,
+                    `Сколько было фондирований, т.е пополнений брокерского счета без покупки акций на бирже`
+                  );
+                }
               }
               if (reports[i].funding == undefined) {
                 if (Number(message) <= reports[i].bs) {
@@ -194,10 +203,15 @@ const reportFunction = (chat, user, message, userName, tgName) => {
               }
               if (reports[i].iphone === undefined) {
                 reports[i].iphone = Number(message);
-                return bot.sendMessage(
-                  user,
-                  'Сколько было установлено приложений на айфон'
-                );
+                if (reports[i].iphone == 0) {
+                  reports[i].ios = 0;
+                  return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
+                } else {
+                  return bot.sendMessage(
+                    user,
+                    'Сколько было установлено приложений на айфон'
+                  );
+                }
               }
               if (reports[i].ios === undefined) {
                 if (Number(message) <= reports[i].iphone) {
@@ -250,10 +264,10 @@ bot.on('callback_query', (msg) => {
   const user = msg.from.id;
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
-  let data = msg.data === 'true' ? true : false;
+  let data = msg.data == 'true' ? 1 : 2;
   let report = reports.find((el) => el.svk == userName + ' ' + tgName);
   let deleteIndex = reports.indexOf(report);
-  if (data) {
+  if (data == 1) {
     const googleData = new Config(report);
     let bonus =
       report.funding * 600 +
@@ -282,6 +296,15 @@ bot.on('callback_query', (msg) => {
     bot.sendMessage(user, 'Сколько было БС');
   }
 });
+
+// const booleanKeyboard = {
+//   reply_markup: JSON.stringify({
+//     inline_keyboard: [
+//       [{ text: 'Все верно', callback_data: 'true' }],
+//       [{ text: 'Изменить', callback_data: 'false' }],
+//     ],
+//   }),
+// };
 setInterval(() => {
   /*
   if (moment().add(6, 'hours').format('HH') === '19') {
