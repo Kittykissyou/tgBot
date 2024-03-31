@@ -7,6 +7,6 @@
   },
   "scripts": {
     "start": "node app5.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon financeBot.js"
   }
 }
