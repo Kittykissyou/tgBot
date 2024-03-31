@@ -88,7 +88,6 @@ bot.on('message', async (msg) => {
   const chat = msg.chat.id;
   const user = msg.from.id;
   const message = msg.text;
-  console.log(report);
   reportFunction(chat, user, message);
 });
 bot.on('callback_query', (msg) => {
