@@ -4,14 +4,12 @@ const TelegramApi = require('node-telegram-bot-api');
 const token = '6643944827:AAEud3mnVvQmj-IoG3tPqOLIkNq82By1WoM';
 const bot = new TelegramApi(token, { polling: true });
 const reports = [];
-let reportsName = [];
-let reportsBotName = [];
 class Config {
   constructor(data) {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbxSz7L_4DXB_oKFhLhLBVr_NyxUISfEkusygYzkau9Z39c-F1bEZCfVVHSbDwDs3T0D/exec';
+      'https://script.google.com/macros/s/AKfycbzPH_vH4yKbYAev6yGeqD1ux-D9EryP6B8qHTWGMCnpKB1JKfBth87oUL14I-cyAvm96w/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -81,7 +79,6 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 5410269834 || // Малофеева Кристина
         user === 5867073053 || // Миронова Юлия
         user === 1302023476 || // Сангаева Виктория
-        user === 1082648927 || // Аня Титова
         user === 1344510807 || // Алексей
         user === 402709516 || // Алена моя
         user === 847331105 || //я
@@ -98,7 +95,6 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 5128220724 || // Конюкова
         user === 6368983749 // Бондаренко
       ) {
-        reportsName.push({ svk: userName + ' ' + tgName, id: user });
         bot.sendMessage(user, `Привет, ${userName}!`);
         bot.sendMessage(user, 'Cколько сегодня было БС');
       }
@@ -115,6 +111,25 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         } else {
           for (let i = 0; i < reports.length; i++) {
             if (reports[i].svk === userName + ' ' + tgName) {
+              if (reports[i].fullName == undefined) {
+                reports[i].fullName = false;
+                let config = {
+                  method: 'get',
+                  maxBodyLength: Infinity,
+                  url: `https://script.google.com/macros/s/AKfycbzPH_vH4yKbYAev6yGeqD1ux-D9EryP6B8qHTWGMCnpKB1JKfBth87oUL14I-cyAvm96w/exec?name=${
+                    userName + ' ' + tgName
+                  }`,
+                  headers: {},
+                };
+                axios
+                  .request(config)
+                  .then((response) => {
+                    reports[i].fullName = response.data;
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
               if (reports[i].bs == undefined) {
                 reports[i].bs = Number(message);
                 if (reports[i].bs == 0) {
@@ -227,10 +242,10 @@ const reportFunction = (chat, user, message, userName, tgName) => {
 
               if (reports[i].cp === undefined) {
                 reports[i].cp = Number(message);
-                reports[i].date = moment()
+                reports[i].time = moment()
                   .add(6, 'hours')
                   .format('DD.MM.YYYY HH:mm:ss');
-
+                reports[i].date = moment().add(6, 'hours').format('DD.MM.YYYY');
                 bot.sendMessage(
                   user,
                   `Подтвердите данные перед отправкой\nБС ${reports[i].bs}\nФондирований ${reports[i].funding}\nПокупок акций ${reports[i].stock}\nПредложений по кросс КК ${reports[i].offerKK}\nКросс КК ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
@@ -258,6 +273,7 @@ bot.on('message', async (msg) => {
   const message = msg.text;
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
+  console.log(reports);
   reportFunction(chat, user, message, userName, tgName);
 });
 bot.on('callback_query', (msg) => {
@@ -280,7 +296,6 @@ bot.on('callback_query', (msg) => {
     axios
       .request(googleData)
       .then((response) => {
-        reportsBotName.push({ svk: userName + ' ' + tgName, id: user });
         console.log(JSON.stringify(response.data));
         reports.splice(deleteIndex, 1);
         return bot.sendMessage(
@@ -305,46 +320,7 @@ bot.on('callback_query', (msg) => {
 //     ],
 //   }),
 // };
-setInterval(() => {
-  /*
-  if (moment().add(6, 'hours').format('HH') === '19') {
-    if (reportsName.length !== reportsBotName.length) {
-      for (let i = 0; i < reportsName.length; i++) {
-        for (let j = 0; j < reportsBotName.length; j++) {
-          if (reportsName[i].svk === reportsBotName[j].svk) {
-            reportsName = reportsName.filter(
-              (el) => el.svk !== reportsName[i].svk
-            );
-            break;
-          }
-        }
-      }
-      for (let k = 0; k < reportsName.length; k++) {
-        bot.sendMessage(reportsName[k].id, `Дай отчет боту!\nСколько было БС`);
-      }
-    }
-  }
-*/
-  if (moment().add(6, 'hours').format('HH') === '08') {
-    if (reportsName.length !== reportsBotName.length) {
-      for (let i = 0; i < reportsName.length; i++) {
-        for (let j = 0; j < reportsBotName.length; j++) {
-          if (reportsName[i].svk === reportsBotName[j].svk) {
-            reportsName = reportsName.filter(
-              (el) => el.svk !== reportsName[i].svk
-            );
-            break;
-          }
-        }
-      }
-      bot.sendMessage(
-        847331105,
-        `Отчет не поступил от ${reportsName.map((el) => el.svk)}`
-      );
-    } else {
-      bot.sendMessage(847331105, `Отчет поступил от всех сотрудников`);
-    }
-    reportsName = [];
-    reportsBotName = [];
-  }
-}, 3600000);
+// setInterval(() => {
+//   if (moment().add(6, 'hours').format('HH') === '08') {
+//   }
+// }, 3600000);
