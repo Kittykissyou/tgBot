@@ -9,43 +9,31 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbzPH_vH4yKbYAev6yGeqD1ux-D9EryP6B8qHTWGMCnpKB1JKfBth87oUL14I-cyAvm96w/exec';
+      'https://script.google.com/macros/s/AKfycbwqNXVjMY9H0gljH3BWApQHp9Fo3zYJ89qNEsf8CBP7tN2GGb8OqTSiWpfByiae4azaGg/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
     this.data = data;
   }
 }
-
-/*
-const numberKeyboard = {
-  reply_markup: JSON.stringify({
-    inline_keyboard: [
-      [
-        { text: '1', callback_data: 1 },
-        { text: '2', callback_data: 2 },
-        { text: '3', callback_data: 3 },
-      ],
-      [
-        { text: '4', callback_data: 4 },
-        { text: '5', callback_data: 5 },
-        { text: '6', callback_data: 6 },
-      ],
-      [
-        { text: '7', callback_data: 7 },
-        { text: '8', callback_data: 8 },
-        { text: '9', callback_data: 9 },
-      ],
-      [{ text: '0', callback_data: 0 }],
-    ],
-  }),
-};
-*/
+let todayDate = moment().add(6, 'hours').format('DD.MM.YYYY');
+let yesterdayDate = moment()
+  .add(6, 'hours')
+  .subtract(1, 'days')
+  .format('DD.MM.YYYY');
 const booleanKeyboard = {
   reply_markup: JSON.stringify({
     inline_keyboard: [
       [{ text: 'Все верно', callback_data: 'true' }],
       [{ text: 'Изменить', callback_data: 'false' }],
+    ],
+  }),
+};
+const chooseDateKeyboard = {
+  reply_markup: JSON.stringify({
+    inline_keyboard: [
+      [{ text: `${todayDate}`, callback_data: 'today' }],
+      [{ text: `${yesterdayDate}`, callback_data: 'yesterday' }],
     ],
   }),
 };
@@ -96,105 +84,36 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 6368983749 // Бондаренко
       ) {
         bot.sendMessage(user, `Привет, ${userName}!`);
-        bot.sendMessage(user, 'Cколько сегодня было БС');
+        return bot.sendMessage(user, `Выбери дату отчета`, chooseDateKeyboard);
       }
     }
 
     if (chat === user) {
       if (message / 0 === Infinity || message == 0) {
         if (reports.length == 0) {
-          reports.push({ svk: userName + ' ' + tgName, bs: Number(message) });
+          reports.push({
+            svk: userName + ' ' + tgName,
+            stock: Number(message),
+          });
           return bot.sendMessage(
             user,
-            `Сколько было фондирований, т.е пополнений брокерского счета без покупки акций на бирже`
+            `Сколько Кросс КК или Комбо фактически предоставлено`
           );
         } else {
           for (let i = 0; i < reports.length; i++) {
             if (reports[i].svk === userName + ' ' + tgName) {
-              if (reports[i].fullName == undefined) {
-                reports[i].fullName = false;
-                let config = {
-                  method: 'get',
-                  maxBodyLength: Infinity,
-                  url: `https://script.google.com/macros/s/AKfycbzPH_vH4yKbYAev6yGeqD1ux-D9EryP6B8qHTWGMCnpKB1JKfBth87oUL14I-cyAvm96w/exec?name=${
-                    userName + ' ' + tgName
-                  }`,
-                  headers: {},
-                };
-                axios
-                  .request(config)
-                  .then((response) => {
-                    reports[i].fullName = response.data;
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }
-              if (reports[i].bs == undefined) {
-                reports[i].bs = Number(message);
-                if (reports[i].bs == 0) {
-                  reports[i].funding = 0;
-                  reports[i].stock = 0;
-                  return bot.sendMessage(
-                    user,
-                    `Сколько всего было предложений по Кросс КК или Комбо`
-                  );
-                } else {
-                  return bot.sendMessage(
-                    user,
-                    `Сколько было фондирований, т.е пополнений брокерского счета без покупки акций на бирже`
-                  );
-                }
-              }
-              if (reports[i].funding == undefined) {
-                if (Number(message) <= reports[i].bs) {
-                  reports[i].funding = Number(message);
-                  return bot.sendMessage(
-                    user,
-                    `Сколько было покупок акций с клиентом на бирже`
-                  );
-                } else {
-                  return bot.sendMessage(
-                    user,
-                    `Количество фондирований не может быть больше количества открытых БС (${reports[i].bs} шт.)`
-                  );
-                }
-              }
               if (reports[i].stock == undefined) {
-                if (Number(message) <= reports[i].bs) {
-                  reports[i].stock = Number(message);
-                  return bot.sendMessage(
-                    user,
-                    `Сколько всего было предложений по Кросс КК или Комбо`
-                  );
-                } else {
-                  return bot.sendMessage(
-                    user,
-                    `Количество покупок акций не может быть больше количества открытых БС (${reports[i].bs} шт.)`
-                  );
-                }
-              }
-
-              if (reports[i].offerKK == undefined) {
-                reports[i].offerKK = Number(message);
+                reports[i].stock = Number(message);
                 return bot.sendMessage(
                   user,
-                  'Сколько из них было фактически выдано'
+                  `Сколько Кросс КК или Комбо фактически предоставлено`
                 );
               }
-              if (reports[i].crossKK === undefined) {
-                if (Number(message) <= reports[i].offerKK) {
-                  reports[i].crossKK = Number(message);
-                  reports[i].refusalOfferKK =
-                    reports[i].offerKK - reports[i].crossKK;
-                  return bot.sendMessage(user, `Сколько было кросс ДК`);
-                } else {
-                  return bot.sendMessage(
-                    user,
-                    `Количество кросс КК не может быть больше количества предложений по кросс КК (${reports[i].offerKK} шт.)`
-                  );
-                }
+              if (reports[i].crossKK == undefined) {
+                reports[i].crossKK = Number(message);
+                return bot.sendMessage(user, `Сколько было кросс ДК`);
               }
+
               if (reports[i].crossDK === undefined) {
                 reports[i].crossDK = Number(message);
                 return bot.sendMessage(
@@ -245,10 +164,10 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                 reports[i].time = moment()
                   .add(6, 'hours')
                   .format('DD.MM.YYYY HH:mm:ss');
-                reports[i].date = moment().add(6, 'hours').format('DD.MM.YYYY');
+
                 bot.sendMessage(
                   user,
-                  `Подтвердите данные перед отправкой\nБС ${reports[i].bs}\nФондирований ${reports[i].funding}\nПокупок акций ${reports[i].stock}\nПредложений по кросс КК ${reports[i].offerKK}\nКросс КК ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
+                  `Подтвердите данные перед отправкой\nПокупок акций ${reports[i].stock}\nКросс КК/Комбо ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
                   booleanKeyboard
                 );
               }
@@ -273,20 +192,36 @@ bot.on('message', async (msg) => {
   const message = msg.text;
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
-
+  console.log(reports);
   reportFunction(chat, user, message, userName, tgName);
 });
 bot.on('callback_query', (msg) => {
   const user = msg.from.id;
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
-  let data = msg.data == 'true' ? 1 : 2;
+  let data = msg.data;
   let report = reports.find((el) => el.svk == userName + ' ' + tgName);
   let deleteIndex = reports.indexOf(report);
-  if (data == 1) {
+  console.log(report);
+  if (data == 'today' || data == 'yesterday') {
+    reports.push({
+      svk: userName + ' ' + tgName,
+      date:
+        data === 'today'
+          ? todayDate
+          : data === 'yesterday'
+          ? yesterdayDate
+          : {},
+    });
+    bot.sendMessage(
+      user,
+      'Сколько было покупок акций с клиентом на бирже на сумму > 1000 рублей'
+    );
+  }
+  if (data == 'true') {
     const googleData = new Config(report);
     let bonus =
-      report.funding * 600 +
+      report.stock * 600 +
       report.crossKK * 470 +
       report.crossDK * 300 +
       report.selfieDK * 300 +
@@ -306,9 +241,10 @@ bot.on('callback_query', (msg) => {
       .catch((error) => {
         console.log(error);
       });
-  } else {
+  }
+  if (data == 'false') {
     reports.splice(deleteIndex, 1);
-    bot.sendMessage(user, 'Сколько было БС');
+    return bot.sendMessage(user, `Выбери дату отчета`, chooseDateKeyboard);
   }
 });
 
