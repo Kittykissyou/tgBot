@@ -192,7 +192,6 @@ bot.on('message', async (msg) => {
   const message = msg.text;
   const userName = msg.from.first_name;
   const tgName = msg.from.username;
-  console.log(reports);
   reportFunction(chat, user, message, userName, tgName);
 });
 bot.on('callback_query', (msg) => {
@@ -202,7 +201,6 @@ bot.on('callback_query', (msg) => {
   let data = msg.data;
   let report = reports.find((el) => el.svk == userName + ' ' + tgName);
   let deleteIndex = reports.indexOf(report);
-  console.log(report);
   if (data == 'today' || data == 'yesterday') {
     reports.push({
       svk: userName + ' ' + tgName,
