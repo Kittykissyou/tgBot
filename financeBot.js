@@ -4,6 +4,7 @@ const TelegramApi = require('node-telegram-bot-api');
 const token = '6690542008:AAETnJRiedUZguKNKBsTH7mqVqI4gMXUPRM';
 const bot = new TelegramApi(token, { polling: true });
 let report = {};
+let msgArr = [];
 let isСonsumption = false;
 let isCriterionNext = false;
 let googleData = {};
@@ -19,6 +20,12 @@ class Config {
     this.data = data;
   }
 }
+const addMsgFunction = (chatID, messageID) => {
+  msgArr.push(
+    { chatID: chatID, messageID: messageID },
+    { chatID: chatID, messageID: messageID + 1 }
+  );
+};
 const booleanKeyboard = {
   reply_markup: JSON.stringify({
     inline_keyboard: [
@@ -60,7 +67,7 @@ const incomeCriterionKeys = {
     ],
   }),
 };
-const reportFunction = (chat, user, message) => {
+const reportFunction = (user, message) => {
   if (user === 847331105) {
     if (message === '/report') {
       return bot.sendMessage(
@@ -85,16 +92,17 @@ const reportFunction = (chat, user, message) => {
 };
 
 bot.on('message', async (msg) => {
-  const chat = msg.chat.id;
   const user = msg.from.id;
+  const messageID = msg.message_id;
   const message = msg.text;
-  reportFunction(chat, user, message);
+  addMsgFunction(user, messageID);
+  reportFunction(user, message);
 });
 bot.on('callback_query', (msg) => {
   const user = msg.from.id;
-  const userName = msg.from.first_name;
-  const tgName = msg.from.username;
+  const messageID = msg.message.message_id;
   let data = msg.data;
+  msgArr.push({ chatID: user, messageID: messageID + 1 });
   if (data === 'Расход' || data === 'Доход') {
     report.category = data;
     report.category === 'Расход'
@@ -129,6 +137,17 @@ const postDataHandler = (data, user) => {
       isСonsumption = false;
       isCriterionNext = false;
       report = {};
+      setTimeout(() => {
+        msgArr.push({
+          chatID: msgArr[msgArr.length - 1].chatID,
+          messageID: msgArr[msgArr.length - 1].messageID + 1,
+        });
+        for (let i = 0; i < msgArr.length; i++) {
+          bot.deleteMessage(msgArr[i].chatID, msgArr[i].messageID);
+        }
+        msgArr = [];
+      }, 3000);
+
       return bot.sendMessage(user, `${response.data}`);
     })
     .catch((error) => {
