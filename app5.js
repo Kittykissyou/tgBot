@@ -254,7 +254,12 @@ bot.on('callback_query', (msg) => {
 //     ],
 //   }),
 // };
-// setInterval(() => {
-//   if (moment().add(6, 'hours').format('HH') === '08') {
-//   }
-// }, 3600000);
+setInterval(() => {
+  if (moment().add(6, 'hours').format('HH') === '00') {
+    todayDate = moment().add(6, 'hours').format('DD.MM.YYYY');
+    yesterdayDate = moment()
+      .add(6, 'hours')
+      .subtract(1, 'days')
+      .format('DD.MM.YYYY');
+  }
+}, 3600000);
