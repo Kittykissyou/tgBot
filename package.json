@@ -3,10 +3,11 @@
     "axios": "^1.6.0",
     "moment": "^2.29.4",
     "node-telegram-bot-api": "^0.63.0",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "tesseract.js": "^5.0.5"
   },
   "scripts": {
     "start": "node app5.js",
-    "dev": "nodemon app5.js"
+    "dev": "nodemon test.js"
   }
 }

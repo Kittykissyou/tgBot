@@ -32,8 +32,8 @@ const booleanKeyboard = {
 const chooseDateKeyboard = {
   reply_markup: JSON.stringify({
     inline_keyboard: [
-      [{ text: `${todayDate}`, callback_data: 'today' }],
-      [{ text: `${yesterdayDate}`, callback_data: 'yesterday' }],
+      [{ text: 'Сегодня', callback_data: 'today' }],
+      [{ text: 'Вчера', callback_data: 'yesterday' }],
     ],
   }),
 };
