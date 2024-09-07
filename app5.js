@@ -77,7 +77,8 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 1235827483 || // Быкова Екатерина
         user === 321171970 || // Цунвентун
         user === 1548908812 || // Прокопчук
-        user === 6368983749 // Бондаренко
+        user === 6368983749 || // Бондаренко
+        user === 948316629 // Фомина
       ) {
         bot.sendMessage(user, `Привет, ${userName}!`);
         return bot.sendMessage(user, `Выбери дату отчета`, chooseDateKeyboard);
