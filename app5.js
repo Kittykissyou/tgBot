@@ -103,6 +103,13 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                 reports[i].stock = Number(message);
                 return bot.sendMessage(
                   user,
+                  `Сколько было фондирований инвесткопилки на сумму > 1000 рублей с настроенным автопополнением`
+                );
+              }
+              if (reports[i].investfouding == undefined) {
+                reports[i].investfouding = Number(message);
+                return bot.sendMessage(
+                  user,
                   `Сколько Кросс КК или Комбо фактически предоставлено`
                 );
               }
@@ -164,7 +171,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
 
                 bot.sendMessage(
                   user,
-                  `Подтвердите данные перед отправкой\nПокупок акций ${reports[i].stock}\nКросс КК/Комбо ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
+                  `Подтвердите данные перед отправкой\nПокупок акций ${reports[i].stock}\nФондирований инвесткопилок ${reports[i].investfouding}\nКросс КК/Комбо ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
                   booleanKeyboard
                 );
               }
@@ -216,11 +223,12 @@ bot.on('callback_query', (msg) => {
   if (data == 'true') {
     const googleData = new Config(report);
     let bonus =
-      report.stock * 600 +
-      report.crossKK * 470 +
-      report.crossDK * 300 +
-      report.selfieDK * 300 +
-      report.selfieKK * 470 +
+      report.stock * 380 +
+      report.investfouding * 230 +
+      report.crossKK * 510 +
+      report.crossDK * 230 +
+      report.selfieDK * 380 +
+      report.selfieKK * 510 +
       report.cp * 100;
 
     axios
