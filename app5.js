@@ -9,7 +9,7 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbzBBSMn8jHcxgMlVwXrZgXM3mRCvHLCLf6Gq8n-EDtdvfyRCwZ1Y2nnEiY-jnjsOZpaHw/exec';
+      'https://script.google.com/macros/s/AKfycbyYWH26kpFDUFUW91yiUBRz2EHohUjl-gjmU-jEpBwGF6HOs0Jr5_PBl_oPcCPCNoa4-w/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
