@@ -9,7 +9,7 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbyxFfCk-QzX3eQngvxL8aHFmit5wjZkht5JphcKJ11tpI2d2QOEqyvCEQeW_B0_3Do3rQ/exec';
+      'https://script.google.com/macros/s/AKfycbxSmfuDeZYq4Zt2TsBHeeybxOmbnBJ9hZ8mi9mh69ByqD68ApqFueFuSEp44AggcXf0cw/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -138,14 +138,17 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                 reports[i].crossKids = Number(message);
                 return bot.sendMessage(
                   user,
-                  'Сколько было установлено приложений на айфон'
+                  'Сколько было подключено подписок Альфа-Смарт'
                 );
               }
               if (reports[i].alfaSmart === undefined) {
                 reports[i].alfaSmart = Number(message);
+                return bot.sendMessage(user, 'Сколько было подключено ИЗК');
+              }
+              if (reports[i].izk === undefined) {
+                reports[i].izk = Number(message);
                 return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
               }
-
               if (reports[i].cp === undefined) {
                 reports[i].cp = Number(message);
                 reports[i].time = moment()
@@ -212,6 +215,9 @@ bot.on('callback_query', (msg) => {
       report.crossDK * 230 +
       report.selfieDK * 380 +
       report.selfieKK * 510 +
+      report.crossKids * 230 +
+      report.alfaSmart * 100 +
+      report.izk * 100 +
       report.cp * 100;
 
     axios
