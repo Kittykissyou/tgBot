@@ -9,7 +9,7 @@ class Config {
     this.method = 'post';
     this.maxBodyLength = Infinity;
     this.url =
-      'https://script.google.com/macros/s/AKfycbyYWH26kpFDUFUW91yiUBRz2EHohUjl-gjmU-jEpBwGF6HOs0Jr5_PBl_oPcCPCNoa4-w/exec';
+      'https://script.google.com/macros/s/AKfycbyxFfCk-QzX3eQngvxL8aHFmit5wjZkht5JphcKJ11tpI2d2QOEqyvCEQeW_B0_3Do3rQ/exec';
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -64,18 +64,16 @@ const reportFunction = (chat, user, message, userName, tgName) => {
         user === 1438443038 || // Чистая
         user === 1254362058 || // Кречетов
         user === 5128220724 || // Конюкова
-        user === 207893136 || // Захожев
         user === 321171970 || // Цунвентун
         user === 1548908812 || // Прокопчук
         user === 6368983749 || // Бондаренко
-        user === 948316629 || // Фомина
-        user === 1029371626 || // Маркова
-        user === 1072804001 || // Карасиков
         user === 1947194569 || // Сидорова
-        user === 1247793855 || // Вазаева
-        user === 435084277 || // Жеребцова
-        user === 5676196549 || // Беломестнова
-        user === 834559430 // Чаговцева
+        user === 5856960881 || // Красноярова
+        user === 615234597 || // Батоева
+        user === 201107392 || // Власьевская
+        user === 1340892251 || // Кравцова
+        user === 1113787679 || // Тимофеева
+        user === 1247793855 // Вазаева
       ) {
         bot.sendMessage(user, `Привет, ${userName}!`);
         return bot.sendMessage(user, `Выбери дату отчета`, chooseDateKeyboard);
@@ -133,31 +131,19 @@ const reportFunction = (chat, user, message, userName, tgName) => {
                 reports[i].selfieKK = Number(message);
                 return bot.sendMessage(
                   user,
-                  'Сколько всего было клиентов с айфоном'
+                  'Сколько всего выдано Кросс Детских'
                 );
               }
-              if (reports[i].iphone === undefined) {
-                reports[i].iphone = Number(message);
-                if (reports[i].iphone == 0) {
-                  reports[i].ios = 0;
-                  return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
-                } else {
-                  return bot.sendMessage(
-                    user,
-                    'Сколько было установлено приложений на айфон'
-                  );
-                }
+              if (reports[i].crossKids === undefined) {
+                reports[i].crossKids = Number(message);
+                return bot.sendMessage(
+                  user,
+                  'Сколько было установлено приложений на айфон'
+                );
               }
-              if (reports[i].ios === undefined) {
-                if (Number(message) <= reports[i].iphone) {
-                  reports[i].ios = Number(message);
-                  return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
-                } else {
-                  return bot.sendMessage(
-                    user,
-                    `Количество установок приложения на айфон не может быть больше общего количества айфонов (${reports[i].iphone} шт.)`
-                  );
-                }
+              if (reports[i].alfaSmart === undefined) {
+                reports[i].alfaSmart = Number(message);
+                return bot.sendMessage(user, 'Сколько было всего сделано ЦП');
               }
 
               if (reports[i].cp === undefined) {
@@ -168,7 +154,7 @@ const reportFunction = (chat, user, message, userName, tgName) => {
 
                 bot.sendMessage(
                   user,
-                  `Подтвердите данные перед отправкой\nПокупок акций ${reports[i].stock}\nФондирований инвесткопилок ${reports[i].investfouding}\nКросс КК/Комбо ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nАйфонов ${reports[i].iphone}\nУстановок приложения ${reports[i].ios}\nЦП ${reports[i].cp}`,
+                  `Подтвердите данные перед отправкой\nПокупок акций ${reports[i].stock}\nФондирований инвесткопилок ${reports[i].investfouding}\nКросс КК/Комбо ${reports[i].crossKK}\nКросс ДК ${reports[i].crossDK}\nСелфи ДК ${reports[i].selfieDK}\nСелфи КК ${reports[i].selfieKK}\nКросс детский карт ${reports[i].crossKids}\nПодключений Альфа-Смарт ${reports[i].alfaSmart}\nЦП ${reports[i].cp}`,
                   booleanKeyboard
                 );
               }
