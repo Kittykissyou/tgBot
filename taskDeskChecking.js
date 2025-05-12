@@ -6,7 +6,7 @@ const bot = new TelegramApi(token, { polling: true });
 let config = {
   method: 'get',
   maxBodyLength: Infinity,
-  url: 'https://script.google.com/macros/s/AKfycbyfaEr64EOb1gxJKBGyExpeDIrGxgsgEXq7P-YIUeaL7Ftfq23TuMVcAGyxqnphDAlNPQ/exec',
+  url: 'https://script.google.com/macros/s/AKfycbyZxSBXoAKJ6CGRTPUXQJB--_j1TNxhHA_UyFH8SWyd_Ww2SKQpHOFZDT7k2Zwi8udEuQ/exec',
   headers: {},
 };
 setInterval(() => {
