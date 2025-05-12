@@ -16,23 +16,30 @@ setInterval(() => {
       if (response.data.length != 0) {
         let report = response.data;
         for (let i = 0; i <= response.data.length - 1; i++) {
-          bot.sendMessage(
-            847331105,
-            `*${moment()
-              .add(6, 'hours')
-              .format('DD.MM.YYYY HH:mm')}*\n\n*Новая задача!*\n${
-              report[i].task
-            }\n*Дата постановки:* ${moment(report[i].dateStart).format(
-              'DD.MM.YYYY'
-            )}\n*Дата завершения:* ${moment(report[i].dateFinish).format(
-              'DD.MM.YYYY'
-            )}\n${
-              report[i].description != ''
-                ? `*Комментарий:* ${report[i].description}`
-                : ``
-            }\n${report[i].person === 'Все' ? `*Для всех.*` : ''}`,
-            { parse_mode: 'Markdown' }
-          );
+          try {
+            bot.sendMessage(
+              847331105,
+              `*${moment()
+                .add(6, 'hours')
+                .format('DD.MM.YYYY HH:mm')}*\n\n*Новая задача!*\n${
+                report[i].task
+              }\n*Дата постановки:* ${moment(report[i].dateStart).format(
+                'DD.MM.YYYY'
+              )}\n*Дата завершения:* ${moment(report[i].dateFinish).format(
+                'DD.MM.YYYY'
+              )}\n${
+                report[i].description != ''
+                  ? `*Комментарий:* ${report[i].description}`
+                  : ``
+              }\n${report[i].person === 'Все' ? `*Для всех.*` : ''}`,
+              { parse_mode: 'Markdown' }
+            );
+          } catch {
+            bot.sendMessage(
+              847331105,
+              `Ошибка при отправке сообщения: ${err.message}`
+            );
+          }
         }
       }
     })
