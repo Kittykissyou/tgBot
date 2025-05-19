@@ -77,4 +77,4 @@ setInterval(() => {
     .catch((error) => {
       bot.sendMessage(847331105, `У нас ошибка:\n${error}`);
     });
-}, 21600000);
+}, 7200000);
