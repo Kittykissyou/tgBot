@@ -12,7 +12,7 @@ let config = {
 let VGETable =
   'https://docs.google.com/spreadsheets/d/1AXDdaY4Q2LNjesizEUi2Ws3H2AEiNJQt3SDE_yAZ80E/edit#gid=0&range=';
 let DATable =
-  'https://docs.google.com/spreadsheets/d/1EfDUqsrGc138iDxCOYq6JTJwzrBcADVcZXSbGgXYBWA/edit#gid=0&range=';
+  'https://docs.google.com/spreadsheets/d/1EfDUqsrGc138iDxCOYq6JTJwzrBcADVcZXSbGgXYBWA/edit#gid=1&range=';
 
 setInterval(() => {
   axios
@@ -28,7 +28,7 @@ setInterval(() => {
       if (report.length > 0) {
         if (report.length < 100) {
           // Добавляем шапку сообщения
-          messageBody += `*Актуальные изменения*\n\n`;
+          messageBody += `*Актуальные изменения:*\n\n`;
 
           // Собираем изменения в одну строку
           for (let i = 0; i < report.length; i++) {
