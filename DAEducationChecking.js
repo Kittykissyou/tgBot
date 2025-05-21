@@ -12,7 +12,7 @@ let config = {
 let VGETable =
   'https://docs.google.com/spreadsheets/d/1AXDdaY4Q2LNjesizEUi2Ws3H2AEiNJQt3SDE_yAZ80E/edit#gid=0&range=';
 let DATable =
-  'https://docs.google.com/spreadsheets/d/1EfDUqsrGc138iDxCOYq6JTJwzrBcADVcZXSbGgXYBWA/edit#gid=1&range=';
+  'https://docs.google.com/spreadsheets/d/1EfDUqsrGc138iDxCOYq6JTJwzrBcADVcZXSbGgXYBWA/edit#gid=993350479&range=';
 
 setInterval(() => {
   axios
