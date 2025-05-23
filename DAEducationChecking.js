@@ -47,7 +47,7 @@ setInterval(() => {
 
           // Отправляем единое сообщение
           try {
-            bot.sendMessage(-1002127559248 /*847331105*/, messageBody, {
+            bot.sendMessage(-1002073838015 /*847331105*/, messageBody, {
               parse_mode: 'Markdown',
             });
           } catch (err) {
@@ -59,7 +59,7 @@ setInterval(() => {
         } else {
           try {
             bot.sendMessage(
-              -1002127559248 /*847331105*/,
+              847331105,
               `*Первичная конфигурация сохранена*\n\nОбъем ${report.length} строк`,
               {
                 parse_mode: 'Markdown',
